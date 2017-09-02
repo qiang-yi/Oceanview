@@ -16,21 +16,20 @@ arcpy.CheckOutExtension("Spatial")
 arcpy.env.overwriteOutput=True
 
 point_dir="D:/oceanview/obs_points/"
-points_20k="D:/oceanview/other_data/sample_point_20k_2.shp"
-dem_20k="D:/oceanview/LiDAR_dem/dtm_20k_int"
-#dem_20k="D:/oceanview/LiDAR_dem/dtm_20k"
-output_dir="D:/oceanview/viewshed_dtm/"
+points_20k="D:/oceanview/other_data/sample_point_20k_4.shp"
 output_dist_dir="D:/oceanview/dist_obs_points/"
-#output_dir="D:/oceanview/viewshed_dtm/"
-origin_dem="D:/oceanview/LiDAR_dem/dtm_20k_int"
+
 #origin_dem="D:/oceanview/LiDAR_dem/dtm"
+dem_20k="D:/oceanview/LiDAR_dem/dsm_no25"
+output_dir="D:/oceanview/viewshed_dsm_no25/"
+
 
 arcpy.env.extent =dem_20k
 arcpy.env.snapRaster = dem_20k
-#arcpy.env.mask = dem_20k
+arcpy.env.outputCoordinateSystem = dem_20k
 arcpy.env.overwriteOutput=True
 
-
+print "processing: "+output_dir
 for row in arcpy.da.SearchCursor(points_20k, ["SHAPE@","FID"]):
     # Print x,y coordinates of each point feature
     #
@@ -38,10 +37,10 @@ for row in arcpy.da.SearchCursor(points_20k, ["SHAPE@","FID"]):
     #dist=row[1]
     fid=row[1]
     
-    if fid >= 240 and fid<241:
+    if fid >= 145 and fid< 146:
         start_time = time.time()
         fname=str(fid)+'.shp'
-        pnt=arcpy.CreateFeatureclass_management(point_dir, fname, "POINT", "D:/oceanview/other_data/sea_point.shp", "", "", origin_dem)
+        pnt=arcpy.CreateFeatureclass_management(point_dir, fname, "POINT", "D:/oceanview/other_data/sea_point.shp", "", "", dem_20k)
         arcpy.AddField_management(pnt, "Dist_Coast", "FLOAT")
         cursor = arcpy.da.InsertCursor(pnt, ["SHAPE@"])
         cursor.insertRow([pnt_obj])
